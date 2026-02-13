@@ -31,43 +31,33 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt pyinstaller
 
-      - name: Crear ejecutable
+      - name: Crear ejecutable PySide6
         shell: bash
         run: |
-          # Extraemos versión del tag (quitando la 'v')
           VERSION=${GITHUB_REF#refs/tags/}
-          echo "Generando ejecutable versión: $VERSION"
+          echo "Generando versión: $VERSION"
 
           if [ "$RUNNER_OS" == "Windows" ]; then
             ICON="assets/icon.ico"
-            python -m PyInstaller \
-              --onefile \
-              --console \
-              --clean \
-              --icon="$ICON" \
-              --name "Generador_Calendario_${VERSION}_Windows" \
-              main.py
+            NAME="Generador_Calendario_${VERSION}_Windows"
 
           elif [ "$RUNNER_OS" == "macOS" ]; then
             ICON="assets/icon.icns"
-            python -m PyInstaller \
-              --onefile \
-              --console \
-              --clean \
-              --icon="$ICON" \
-              --name "Generador_Calendario_${VERSION}_macOS" \
-              main.py
+            NAME="Generador_Calendario_${VERSION}_macOS"
 
           else
             ICON="assets/icon.png"
-            python -m PyInstaller \
-              --onefile \
-              --console \
-              --clean \
-              --icon="$ICON" \
-              --name "Generador_Calendario_${VERSION}_Linux" \
-              main.py
+            NAME="Generador_Calendario_${VERSION}_Linux"
           fi
+
+          python -m PyInstaller \
+            --onefile \
+            --windowed \
+            --clean \
+            --collect-all PySide6 \
+            --icon="$ICON" \
+            --name "$NAME" \
+            main.py
 
       - name: Crear Release en GitHub
         uses: softprops/action-gh-release@v1
