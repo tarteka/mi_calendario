@@ -2,7 +2,7 @@
 
 Este proyecto automatiza la extracción de turnos de trabajo desde la plataforma Ambu App y los convierte en formatos útiles: un **PDF listo para imprimir** y un archivo **ICS para integrar en Google Calendar o Apple Calendar (iPhone)**.
 
-![Versión](https://img.shields.io/badge/version-1.1.0-blue.svg)
+![Versión](https://img.shields.io/badge/version-1.0.0-blue.svg)
 ![Python](https://img.shields.io/badge/python-3.10+-yellow.svg)
 
 ---
@@ -23,7 +23,7 @@ Este proyecto automatiza la extracción de turnos de trabajo desde la plataforma
 Si no eres programador, simplemente descarga el archivo ejecutable:
 
 1. Ve a la sección de **Releases** en este repositorio.
-2. Descarga `Generador_Calendario_Ambu.exe`.
+2. Descarga `Generador_Calendario.exe`.
 3. Ejecútalo en tu ordenador.
     * *Nota: La primera vez descargará el motor de navegación (Chromium), espera a que finalice.*
 4. Introduce tu **usuario**, **contraseña** y el **año** deseado (o pulsa Enter para el año actual).
