@@ -3,7 +3,7 @@ name: Crear Ejecutable Windows
 on:
   push:
     tags:
-      - 'v*' # Se activa cuando subes un tag que empieza por 'v' (ej: v1.1.0)
+      - 'v*'
 
 permissions:
   contents: write
@@ -15,8 +15,12 @@ jobs:
         steps:
         - name: Descargar código
           uses: actions/checkout@v4
+
+        - name: Configurar Python
+          uses: actions/setup-python@v5
           with:
             python-version: '3.12'
+            cache: 'pip'
         
         - name: Instalar dependencias
           run: |
