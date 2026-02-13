@@ -2,7 +2,7 @@
 
 Este proyecto automatiza la extracción de turnos de trabajo desde la plataforma Ambu App y los convierte en formatos útiles: un **PDF listo para imprimir** y un archivo **ICS para integrar en Google Calendar o Apple Calendar (iPhone)**.
 
-![Versión](https://img.shields.io/badge/version-1.0.0-blue.svg)
+[ ![Download v1.0.1](https://img.shields.io/badge/descargar_exe-v1.0.1-orange.svg) ](https://github.com/tarteka/mi_calendario/releases/download/v1.0.1/Generador_Calendario_v1.0.1.exe)
 ![Python](https://img.shields.io/badge/python-3.10+-yellow.svg)
 
 ---
@@ -51,9 +51,6 @@ source venv/bin/activate
 
 # 4. Instalar dependencias
 pip install -r requirements.txt
-
-# 5. Instalar navegadores de Playwright (solo la primera vez)
-playwright install chromium
 ```
 
 ### 2. Ejecución del Script en Python
@@ -76,7 +73,7 @@ El archivo final aparecerá en la carpeta `/dist`.
 
 ## Cómo lanzar una nueva versión (Releases)
 
-Gracias a **GitHub Actions**, no necesitas un PC con Windows para generar el ejecutable. El proceso está automatizado para que se dispare cada vez que creas una "etiqueta" (tag) de versión.
+Usaremos **GitHub Actions** y los **tags**
 
 ### Pasos para publicar una actualización
 
