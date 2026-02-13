@@ -42,6 +42,12 @@ def crear_ics(config):
         cal.add_component(evento)
 
     nombre_archivo = config["OUTPUT"]+".ics"
+    # Aseguramos que la carpeta de salida exista antes de escribir ICS
+    out_base = config.get("OUTPUT", "calendario")
+    out_dir = os.path.dirname(out_base)
+    if out_dir and not os.path.exists(out_dir):
+        os.makedirs(out_dir, exist_ok=True)
+
     with open(nombre_archivo, 'wb') as f:
         f.write(cal.to_ical())
     

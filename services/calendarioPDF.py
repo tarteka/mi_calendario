@@ -146,5 +146,11 @@ def generar_pdf(config):
     pdf.cell(40, 10, str(total_n), border=1, fill=True, align="C")
     pdf.set_fill_color(180, 220, 180); pdf.cell(40, 10, str(total_d + total_n), border=1, fill=True, align="C")
 
-    pdf.output(config["OUTPUT"]+".pdf")
+    # Aseguramos que la carpeta de salida exista antes de escribir PDF
+    out_base = config.get("OUTPUT", "calendario")
+    out_dir = os.path.dirname(out_base)
+    if out_dir and not os.path.exists(out_dir):
+        os.makedirs(out_dir, exist_ok=True)
+
+    pdf.output(out_base+".pdf")
     print("PDF generado con éxito.")

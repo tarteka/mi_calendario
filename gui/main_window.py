@@ -1,10 +1,10 @@
 # gui/main_window.py
 # Ventana principal: formulario de credenciales, controls, barra de progreso y log.
-from PySide6.QtCore import Slot
+from PySide6.QtCore import Slot, Qt
 from PySide6.QtWidgets import (
-    QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit,
+    QWidget, QVBoxLayout, QHBoxLayout, QFormLayout, QLabel, QLineEdit,
     QSpinBox, QPushButton, QTextEdit, QProgressBar, QMessageBox,
-    QFileDialog
+    QFileDialog, QGroupBox, QSizePolicy, QCheckBox
 )
 from pathlib import Path
 from .worker import Worker
@@ -14,35 +14,47 @@ class MainWindow(QWidget):
         super().__init__()
         self.setWindowTitle("Generador de Calendario")
         self.worker = None
-        self.setFixedSize(500, 300)
+        self.setMinimumSize(700, 420)
         self._build_ui()
 
     def _build_ui(self):
         layout = QVBoxLayout()
 
-        # Fila: usuario / contraseña / año
-        fila = QHBoxLayout()
-        fila.addWidget(QLabel("Usuario:"))
-        self.usuario = QLineEdit()
-        fila.addWidget(self.usuario)
+        # Grupo de credenciales (alineado con FormLayout)
+        cred_box = QGroupBox()
+        form = QFormLayout()
+        form.setLabelAlignment(Qt.AlignRight)
 
-        fila.addWidget(QLabel("Contraseña:"))
+        self.usuario = QLineEdit()
+        form.addRow(QLabel("Usuario:"), self.usuario)
+
         self.clave = QLineEdit()
         self.clave.setEchoMode(QLineEdit.Password)
-        fila.addWidget(self.clave)
 
-        fila.addWidget(QLabel("Año:"))
+        # Container for password + show checkbox
+        pwd_container = QWidget()
+        pwd_layout = QHBoxLayout(pwd_container)
+        pwd_layout.setContentsMargins(0, 0, 0, 0)
+        pwd_layout.setSpacing(6)
+        pwd_layout.addWidget(self.clave)
+        self.chk_show_pwd = QCheckBox("Mostrar contraseña")
+        self.chk_show_pwd.toggled.connect(self._toggle_password_visibility)
+        pwd_layout.addWidget(self.chk_show_pwd)
+
+        form.addRow(QLabel("Contraseña:"), pwd_container)
+
         self.anio = QSpinBox()
         self.anio.setRange(2026, 2050)
-        # por defecto toma el año actual al arrancar (si quieres)
         from datetime import datetime
         self.anio.setValue(datetime.now().year)
-        fila.addWidget(self.anio)
+        form.addRow(QLabel("Año:"), self.anio)
 
-        layout.addLayout(fila)
+        cred_box.setLayout(form)
+        layout.addWidget(cred_box)
 
         # Fila: ruta de salida (editable mediante diálogo)
         outfila = QHBoxLayout()
+        outfila.setSpacing(8)
         outfila.addWidget(QLabel("Guardar en:"))
         self.output_path = QLineEdit()
         self.output_path.setReadOnly(True)
@@ -63,11 +75,18 @@ class MainWindow(QWidget):
 
         # Botones
         botones = QHBoxLayout()
+        botones.setSpacing(12)
+        botones.addStretch()
         self.btn_generar = QPushButton("Generar")
+        self.btn_generar.setObjectName("btn_generar")
+        self.btn_generar.setMinimumWidth(120)
+        self.btn_generar.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
         self.btn_generar.clicked.connect(self.on_generar)
         botones.addWidget(self.btn_generar)
 
         self.btn_salir = QPushButton("Salir")
+        self.btn_salir.setObjectName("btn_salir")
+        self.btn_salir.setMinimumWidth(100)
         self.btn_salir.clicked.connect(self.close)
         botones.addWidget(self.btn_salir)
 
@@ -81,10 +100,10 @@ class MainWindow(QWidget):
 
         self.log = QTextEdit()
         self.log.setReadOnly(True)
+        self.log.setMinimumHeight(120)
         layout.addWidget(self.log)
 
         self.setLayout(layout)
-        self.resize(900, 480)
 
     @Slot()
     def on_generar(self):
@@ -126,6 +145,13 @@ class MainWindow(QWidget):
     @Slot(str)
     def _append_log(self, text):
         self.log.append(text)
+
+    @Slot(bool)
+    def _toggle_password_visibility(self, visible: bool):
+        if visible:
+            self.clave.setEchoMode(QLineEdit.Normal)
+        else:
+            self.clave.setEchoMode(QLineEdit.Password)
 
     @Slot()
     def _on_finished(self):

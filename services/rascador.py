@@ -129,8 +129,14 @@ def ejecutar_scraper(config, year, canal, usuario=None, clave=None):
                 # Columnas solicitadas
                 df = df[["Fecha", "Turno", "Base_Nombre", "Base_ID", "Festivo"]]
                 
-                df.to_csv(config["OUTPUT"]+".csv", index=False, encoding="utf-8-sig")
-                print(f"\n¡ÉXITO! '{config['OUTPUT']}.csv' generado correctamente.")
+                # Aseguramos que la carpeta de salida exista
+                out_base = config.get("OUTPUT", "calendario")
+                out_dir = os.path.dirname(out_base)
+                if out_dir and not os.path.exists(out_dir):
+                    os.makedirs(out_dir, exist_ok=True)
+
+                df.to_csv(out_base+".csv", index=False, encoding="utf-8-sig")
+                print(f"\n¡ÉXITO! '{out_base}.csv' generado correctamente.")
                 print(f"Rango de fechas detectado: {df['Fecha'].min()} a {df['Fecha'].max()}")
                 print(f"Total registros: {len(df)}")
             else:

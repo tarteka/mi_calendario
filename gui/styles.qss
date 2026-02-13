@@ -1,15 +1,63 @@
 /* gui/styles.qss
-   Estilos básicos para la GUI (opcional). */
+   Estilos modernizados y profesionales para la aplicación */
 QWidget {
+    background: #f6f8fb;
+    color: #202124;
     font-family: "Segoe UI", Roboto, Arial, sans-serif;
     font-size: 11pt;
 }
+
+QGroupBox {
+    border: none;
+    margin-top: 0px;
+}
+
+QLabel {
+    font-weight: 600;
+    color: #2b2f33;
+}
+
+QLineEdit, QSpinBox, QTextEdit {
+    background: #ffffff;
+    border: 1px solid #dbe3ee;
+    padding: 6px 8px;
+    border-radius: 8px;
+    selection-background-color: #cfe6ff;
+}
+
 QPushButton {
-    padding: 6px 12px;
+    background: #1e88e5;
+    color: #ffffff;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 8px;
+    min-height: 30px;
 }
+
+QPushButton:hover {
+    background: #1669b8;
+}
+
+QPushButton:disabled {
+    background: #9bbce6;
+}
+
+QPushButton#btn_salir {
+    background: #6c757d;
+}
+
 QProgressBar {
-    height: 18px;
+    background: #e9f0fb;
+    border-radius: 8px;
+    height: 14px;
 }
+QProgressBar::chunk {
+    background: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 #1e88e5, stop:1 #4fb3ff);
+    border-radius: 8px;
+}
+
 QTextEdit {
-    background: #1a1a1a10;
+    background: #ffffff;
+    border: 1px solid #dbe3ee;
+    border-radius: 8px;
 }
