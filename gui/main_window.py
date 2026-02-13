@@ -3,8 +3,10 @@
 from PySide6.QtCore import Slot
 from PySide6.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit,
-    QSpinBox, QPushButton, QTextEdit, QProgressBar, QMessageBox
+    QSpinBox, QPushButton, QTextEdit, QProgressBar, QMessageBox,
+    QFileDialog
 )
+from pathlib import Path
 from .worker import Worker
 
 class MainWindow(QWidget):
@@ -38,6 +40,26 @@ class MainWindow(QWidget):
         fila.addWidget(self.anio)
 
         layout.addLayout(fila)
+
+        # Fila: ruta de salida (editable mediante diálogo)
+        outfila = QHBoxLayout()
+        outfila.addWidget(QLabel("Guardar en:"))
+        self.output_path = QLineEdit()
+        self.output_path.setReadOnly(True)
+        # valor por defecto: 'calendario' dentro de la carpeta Descargas del usuario (si existe)
+        downloads = Path.home() / "Downloads"
+        if downloads.exists() and downloads.is_dir():
+            self.output_base = str(downloads / "calendario")
+        else:
+            self.output_base = str(Path.home() / "calendario")
+        self.output_path.setText(self.output_base)
+        outfila.addWidget(self.output_path)
+
+        self.btn_change_output = QPushButton("Cambiar...")
+        self.btn_change_output.clicked.connect(self.choose_output)
+        outfila.addWidget(self.btn_change_output)
+
+        layout.addLayout(outfila)
 
         # Botones
         botones = QHBoxLayout()
@@ -85,7 +107,8 @@ class MainWindow(QWidget):
             "PROVINCIA_VAL": "617",
             "DIA_DESDE": "01", "MES_DESDE": "01",
             "DIA_HASTA": "31", "MES_HASTA": "12",
-            "OUTPUT": "calendario"
+            # OUTPUT es la ruta base (sin extensión) seleccionada por el usuario
+            "OUTPUT": self.output_base
         }
 
         # Crear y arrancar worker (hilo)
@@ -109,6 +132,22 @@ class MainWindow(QWidget):
         self._append_log("Proceso finalizado correctamente.")
         self.btn_generar.setEnabled(True)
         self.progreso.setValue(100)
+
+    @Slot()
+    def choose_output(self):
+        # Permite elegir un nombre base; si el usuario selecciona un archivo
+        # con extensión .csv/.pdf/.ics se quitará la extensión para usarla como base.
+        default = self.output_base
+        fname, _ = QFileDialog.getSaveFileName(self, "Guardar como", default, "CSV Files (*.csv);;PDF Files (*.pdf);;ICS Files (*.ics);;All Files (*)")
+        if not fname:
+            return
+        p = Path(fname)
+        if p.suffix.lower() in ('.csv', '.pdf', '.ics'):
+            base = str(p.with_suffix(''))
+        else:
+            base = str(p)
+        self.output_base = base
+        self.output_path.setText(self.output_base)
 
     @Slot(str)
     def _on_error(self, err):
