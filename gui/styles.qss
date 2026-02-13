@@ -1,0 +1,15 @@
+/* gui/styles.qss
+   Estilos básicos para la GUI (opcional). */
+QWidget {
+    font-family: "Segoe UI", Roboto, Arial, sans-serif;
+    font-size: 11pt;
+}
+QPushButton {
+    padding: 6px 12px;
+}
+QProgressBar {
+    height: 18px;
+}
+QTextEdit {
+    background: #1a1a1a10;
+}
