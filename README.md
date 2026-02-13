@@ -74,6 +74,39 @@ El archivo final aparecerá en la carpeta `/dist`.
 
 ---
 
+## Cómo lanzar una nueva versión (Releases)
+
+Gracias a **GitHub Actions**, no necesitas un PC con Windows para generar el ejecutable. El proceso está automatizado para que se dispare cada vez que creas una "etiqueta" (tag) de versión.
+
+### Pasos para publicar una actualización
+
+1. **Prepara tus cambios:**
+   Asegúrate de que el código funciona y de haber actualizado la variable `VERSION` en tu script principal si fuera necesario.
+
+2. **Sube los cambios a la rama principal:**
+
+   ```bash
+   git add .
+   git commit -m "Descripción de las mejoras"
+   git push origin main
+   ```
+
+3. **Crea y sube el Tag de versión**
+
+Elige el número de versión siguiendo el estándar (ej: `v1.1.0`).
+
+```bash
+# Crear el tag localmente
+git tag -a v1.1.0 -m "Versión 1.1.0: Resumen de cambios"
+
+# Subir el tag a GitHub
+git push origin v1.1.0
+```
+
+GitHub detectará el tag, levantará un servidor con Windows, compilará el .exe ccreará una nueva entrada en la sección `Releases` automáticamente.
+
+---
+
 ## Estructura del Código
 
 El sistema es modular y centralizado:
