@@ -4,6 +4,7 @@ import getpass
 import rascador as scraper
 import calendarioPDF
 import calendarioICS
+import multiprocessing
 from playwright.sync_api import sync_playwright
 from datetime import datetime
 
@@ -17,24 +18,55 @@ CONFIG = {
     "OUTPUT": "calendario"
 }
 
-def instalar_playwright_si_falta():
+def preparar_navegador():
+    """
+    Intenta detectar Chrome/Edge en el sistema.
+    Si no se encuentra, se descargará el motor de Playwright automáticamente.
+    """
     print("Comprobando motor de navegación...")
-    try:
-        with sync_playwright() as p:
-            p.chromium.launch()
-        print("Motor de navegación listo.")
-    except Exception:
-        print("Motor no encontrado. Descargando componentes...")
-        subprocess.run([sys.executable, "-m", "playwright", "install", "chromium"], check=True)
-        print("Instalación completada.\n")
+
+    with sync_playwright() as p:
+        # 1. Intentamos con Chrome del sistema
+        try:
+            browser = p.chromium.launch(channel="chrome", headless=True)
+            browser.close()
+            print("Utilizando Google Chrome del sistema.")
+            return "chrome"
+        except:
+            pass
+
+        # 2. Intentamos con Edge del sistema
+        try:
+            browser = p.chromium.launch(channel="msedge", headless=True)
+            browser.close()
+            print("Utilizando Microsoft Edge del sistema.")
+            return "msedge"
+        except:
+            pass
+
+        # 3. Si llegamos aquí, no hay navegador compatible. Intentamos usar el de Playwright.
+        try:
+            # Intentamos lanzarlo para ver si ya se descargó antes
+            browser = p.chromium.launch(headless=True)
+            browser.close()
+            print("Utilizando motor Chromium propio.")
+            return None # None significa que usará el default de Playwright
+        except:
+            print("No se encontró ningún navegador. Descargando componentes necesarios...")
+            # Aquí es donde el freeze_support es vital para evitar el bucle
+            subprocess.run([sys.executable, "-m", "playwright", "install", "chromium"], check=True)
+            print("Instalación completada.")
+            return None
 
 if __name__ == "__main__":
+    multiprocessing.freeze_support()  # Necesario para PyInstaller en Windows   
     try:
         print("==========================================")
         print("   GENERADOR DE CALENDARIO AMBULANCIAS")
         print("==========================================\n")
         
-        instalar_playwright_si_falta()
+        # Guardamos qué canal vamos a usar
+        canal_navegador = preparar_navegador()
 
         # Obtener el año actual automáticamente
         current_year = datetime.now().year
@@ -54,7 +86,7 @@ if __name__ == "__main__":
 
         # Ejecutamos el rascado pasando las variables directamente
         year = int(year_input) if year_input.isdigit() else current_year
-        scraper.ejecutar_scraper(CONFIG, year, user_input, pass_input)
+        scraper.ejecutar_scraper(CONFIG, year, canal_navegador, user_input, pass_input)
         
         print("\nGenerando PDF...")
         calendarioPDF.generar_pdf(CONFIG)

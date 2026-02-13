@@ -3,13 +3,19 @@ import pandas as pd
 from playwright.sync_api import sync_playwright
 from bs4 import BeautifulSoup
 
-def ejecutar_scraper(config, year, usuario=None, clave=None):
+def ejecutar_scraper(config, year, canal, usuario=None, clave=None):
 
     with sync_playwright() as p:
 
         year_str = str(year)
 
-        browser = p.chromium.launch(headless=True)
+        # Si canal es "chrome" o "msedge", usará esos. 
+        # Si es None, usará el Chromium descargado.
+        launch_args = {"headless": True}
+        if canal:
+            launch_args["channel"] = canal
+
+        browser = p.chromium.launch(**launch_args)
         context = browser.new_context()
 
         # Bloqueamos imágenes para velocidad (excepto las necesarias para el filtro)
