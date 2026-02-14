@@ -44,6 +44,16 @@ class Worker(QThread):
             self.log.emit("Archivo ICS generado.")
             self.progress.emit(95)
 
+            # Borrar el archivo CSV tras generar PDF e ICS
+            import os
+            out_base = self.config.get("OUTPUT", "calendario")
+            csv_path = out_base + ".csv"
+            try:
+                if os.path.exists(csv_path):
+                    os.remove(csv_path)
+                    self.log.emit(f"Archivo temporal CSV eliminado: {csv_path}")
+            except Exception as e:
+                self.log.emit(f"No se pudo eliminar el CSV: {e}")
             self.finished_signal.emit()
             self.progress.emit(100)
         except Exception as e:
