@@ -13,6 +13,7 @@ from .about_dialog import AboutDialog
 from PySide6.QtWidgets import QApplication
 from datetime import datetime
 from __version__ import __version__
+from services.config_loader import load_config
 
 class MainWindow(QMainWindow):
 
@@ -173,16 +174,9 @@ class MainWindow(QMainWindow):
             QMessageBox.warning(self, "Faltan datos", "Usuario y contraseña son obligatorios.")
             return
 
-        # Configuración base (puedes extenderla)
-        config = {
-            "AMBU_URL": "https://ambulanciasgipuzkoa.ambu.app/identificar.php",
-            "AMBU_PLAN_URL": "https://ambulanciasgipuzkoa.ambu.app/admin/planificaciones/",
-            "PROVINCIA_VAL": "617",
-            "DIA_DESDE": "01", "MES_DESDE": "01",
-            "DIA_HASTA": "31", "MES_HASTA": "12",
-            # OUTPUT es la ruta base (sin extensión) seleccionada por el usuario
-            "OUTPUT": self.output_base
-        }
+        # Configuración para el worker (puede ser ampliada con más opciones si es necesario)
+        config = load_config()
+        config["OUTPUT"] = self.output_base
 
         # Crear y arrancar worker (hilo)
         self.worker = Worker(config=config, year=anio, canal="chrome", usuario=usuario, clave=clave)

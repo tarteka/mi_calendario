@@ -17,7 +17,17 @@ python update_version.py
 
 echo.
 echo Compilando ejecutable...
-python -m PyInstaller --onefile --windowed --clean --collect-all PySide6 --icon="assets/icon.ico" --add-data "assets;assets" --add-data "gui;gui" --name "Generador_Calendario" main.py
+python -m PyInstaller ^
+  --onefile ^
+  --windowed ^
+  --clean ^
+  --collect-all PySide6 ^
+  --icon="assets/icon.ico" ^
+  --add-data "assets;assets" ^
+  --add-data "gui;gui" ^
+  --add-data "config.json;." ^
+  --name "Generador_Calendario" ^
+  main.py
 
 if %errorlevel% equ 0 (
     echo.
