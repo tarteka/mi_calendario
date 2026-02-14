@@ -9,11 +9,12 @@ from PySide6.QtWidgets import (
 from pathlib import Path
 from .worker import Worker
 from PySide6.QtWidgets import QApplication
+from __version__ import __version__
 
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("Mi Calendario de Guardias")
+        self.setWindowTitle(f"Mi Calendario de Guardias v{__version__}")
         # Asegurar que la ventana se trata como una ventana normal (para barra de tareas)
         try:
             self.setWindowFlags(self.windowFlags() | Qt.Window)
