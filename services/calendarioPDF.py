@@ -96,20 +96,20 @@ def generar_pdf(config):
                     
                     # Turno (D o N) arriba
                     pdf.set_font("helvetica", "B", 8)
-                    pdf.set_text_color(0, 80, 180) if turno == "Día" else pdf.set_text_color(120, 0, 150)
+                    pdf.set_text_color(0, 80, 180) if turno == "D" else pdf.set_text_color(120, 0, 150)
                     pdf.set_xy(x, y + 1)
-                    pdf.cell(8.2, 4, turno[0], align="C")
-                    
+                    pdf.cell(8.2, 4, turno, align="C")
+
                     # Nombre de base abajo
                     pdf.set_font("helvetica", "", 4.5)
                     pdf.set_text_color(50, 50, 50)
                     pdf.set_xy(x, y + 5.5)
-                    
+
                     # Limpiamos nombre (Ej: ZARAUTZ-U3121 -> ZARAUTZ)
                     nombre_limpio = nombre_base.split('-')[0] if '-' in nombre_base else nombre_base
                     pdf.cell(8.2, 4, nombre_limpio, align="C")
-                    
-                    if turno == "Día": d_count += 1
+
+                    if turno == "D": d_count += 1
                     else: n_count += 1
                 
                 pdf.set_xy(x + 8.2, y)
