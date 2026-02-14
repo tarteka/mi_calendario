@@ -10,7 +10,6 @@ from .main_window import MainWindow
 
 def _get_base_path():
     """Devuelve la ruta base correcta según si estamos empaquetados o no.
-
     Cuando PyInstaller empaqueta con --onefile, extrae archivos a _MEIPASS.
     """
     if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
@@ -24,7 +23,7 @@ def _get_base_path():
 ROOT = _get_base_path()
 
 def _load_styles(app):
-    qss_path = ROOT / "gui" / "styles.qss"
+    qss_path = ROOT / "gui" / "styles" / "main.qss"
     try:
         with open(qss_path, "r", encoding="utf-8") as f:
             app.setStyleSheet(f.read())

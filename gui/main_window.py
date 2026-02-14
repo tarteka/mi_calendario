@@ -8,18 +8,17 @@ from PySide6.QtWidgets import (
 )
 from pathlib import Path
 from .worker import Worker
+from .about_dialog import AboutDialog
 from PySide6.QtWidgets import QApplication
 from __version__ import __version__
 
 class MainWindow(QMainWindow):
+
+    
+
     def __init__(self):
         super().__init__()
-        self.setWindowTitle(f"Mi Calendario de Guardias v{__version__}")
-        # Asegurar que la ventana se trata como una ventana normal (para barra de tareas)
-        try:
-            self.setWindowFlags(self.windowFlags() | Qt.Window)
-        except Exception:
-            pass
+        self.setWindowTitle(f"Mi Calendario de Guardias - v{__version__}")
 
         # Si la QApplication tiene un icono establecido, úsalo también en la ventana
         try:
@@ -29,12 +28,15 @@ class MainWindow(QMainWindow):
         except Exception:
             pass
 
-        self.worker = None
         self.setMinimumSize(700, 420)
-        self._build_ui()
 
+        self.worker = None
+        self._build_ui()
+        
     def _build_ui(self):
         layout = QVBoxLayout()
+        layout.setContentsMargins(30, 25, 30, 25)
+        layout.setSpacing(18)
 
         # Grupo de credenciales (alineado con FormLayout)
         cred_box = QGroupBox()
@@ -42,9 +44,11 @@ class MainWindow(QMainWindow):
         form.setLabelAlignment(Qt.AlignRight)
 
         self.usuario = QLineEdit()
+        self.usuario.setPlaceholderText("Usuario de Lotura (ambulanciasgipuzkoa.ambu.app)")
         form.addRow(QLabel("Usuario:"), self.usuario)
 
         self.clave = QLineEdit()
+        self.clave.setPlaceholderText("Contraseña de Lotura")
         self.clave.setEchoMode(QLineEdit.Password)
 
         # Container for password + show checkbox
@@ -92,6 +96,13 @@ class MainWindow(QMainWindow):
         # Botones
         botones = QHBoxLayout()
         botones.setSpacing(12)
+
+        self.btn_about = QPushButton("Acerca de")
+        self.btn_about.setObjectName("btn_about")
+        self.btn_about.setMinimumWidth(100)
+        self.btn_about.clicked.connect(self._show_about)
+        botones.addWidget(self.btn_about)
+
         botones.addStretch()
         self.btn_generar = QPushButton("Generar")
         self.btn_generar.setObjectName("btn_generar")
@@ -171,6 +182,12 @@ class MainWindow(QMainWindow):
             self.clave.setEchoMode(QLineEdit.Normal)
         else:
             self.clave.setEchoMode(QLineEdit.Password)
+
+    @Slot()
+    def _show_about(self):
+        """Muestra el diálogo de información de la aplicación."""
+        dialog = AboutDialog(self)
+        dialog.exec()
 
     @Slot()
     def _on_finished(self):
