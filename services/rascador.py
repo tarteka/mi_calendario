@@ -2,6 +2,7 @@ import os
 import pandas as pd
 from playwright.sync_api import sync_playwright
 from bs4 import BeautifulSoup
+from services.exceptions import LoginError, DownloadError
 
 def ejecutar_scraper(config, year, canal, usuario=None, clave=None):
 
@@ -53,7 +54,7 @@ def ejecutar_scraper(config, year, canal, usuario=None, clave=None):
             soup_login = BeautifulSoup(html_login, "html.parser")
             error_login = soup_login.find("p", class_="error")
             if error_login and "no es correcta" in error_login.get_text():
-                raise Exception("Usuario o contraseña incorrectos. Por favor, revisa tus credenciales.")
+                raise LoginError("Credenciales incorrectas.")
 
             # 2. NAVEGACIÓN
             print("2. Accediendo a planificaciones...")
@@ -76,6 +77,13 @@ def ejecutar_scraper(config, year, canal, usuario=None, clave=None):
             # 4. GENERAR TABLA
             print("4. Solicitando calendario...")
             page.click('input[name="boton_calendario"]')
+            
+            page.wait_for_load_state("networkidle")
+            html = page.content()
+            soup = BeautifulSoup(html, "html.parser")
+            
+            if soup.select_one("div.error"):
+                raise DownloadError("No se han podido obtener los datos del calendario.")
             
             # Esperamos a que la tabla se genere
             page.wait_for_selector("table.fila_fija", timeout=60000)
@@ -164,7 +172,7 @@ def ejecutar_scraper(config, year, canal, usuario=None, clave=None):
             else:
                 print("\nAVISO: No se encontraron datos (verifique filtros de fechas).")
 
-        except Exception as e:
-            print(f"\nERROR: {e}")
+        except Exception:
+            raise
         finally:
             browser.close()

@@ -48,15 +48,16 @@ class Worker(QThread):
             import os
             out_base = self.config.get("OUTPUT", "calendario")
             csv_path = out_base + ".csv"
+            
             try:
                 if os.path.exists(csv_path):
                     os.remove(csv_path)
                     self.log.emit(f"Archivo temporal CSV eliminado: {csv_path}")
             except Exception as e:
                 self.log.emit(f"No se pudo eliminar el CSV: {e}")
-            self.finished_signal.emit()
+            
             self.progress.emit(100)
+            self.finished_signal.emit()
+            
         except Exception as e:
-            tb = traceback.format_exc()
             self.error.emit(str(e))
-            self.log.emit("Trazado de la excepción:\n" + tb)

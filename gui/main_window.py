@@ -237,5 +237,18 @@ class MainWindow(QMainWindow):
 
     @Slot(str)
     def _on_error(self, err):
-        self._append_log(f"[ERROR] {err}")
+        # Limpiar log y barra de progreso en caso de error
+        self.log.clear()
+        self.progreso.setValue(0)
+        self.progreso.setTextVisible(False)
+        
+        # Mostrar mensaje de error al usuario
+        QMessageBox.warning(
+            self,
+            "Error",
+            "No se ha podido completar el proceso.\n\n"
+            "Revisa tus credenciales o la configuración e inténtalo de nuevo."
+        )
+        
+        # Reactivar Boton Generar para permitir reintentos
         self.btn_generar.setEnabled(True)
