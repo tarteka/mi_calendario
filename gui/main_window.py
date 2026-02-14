@@ -1,20 +1,22 @@
 # gui/main_window.py
 # Ventana principal: formulario de credenciales, controls, barra de progreso y log.
-from PySide6.QtCore import Slot, Qt
+from PySide6.QtCore import Slot, Qt, QSize
 from PySide6.QtWidgets import (
     QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QFormLayout, QLabel, QLineEdit,
-    QSpinBox, QPushButton, QTextEdit, QProgressBar, QMessageBox,
-    QFileDialog, QGroupBox, QSizePolicy, QCheckBox
+    QComboBox, QPushButton, QTextEdit, QProgressBar, QMessageBox,
+    QFileDialog, QGroupBox, QCheckBox
 )
+from PySide6.QtGui import QIcon
 from pathlib import Path
 from .worker import Worker
 from .about_dialog import AboutDialog
 from PySide6.QtWidgets import QApplication
+from datetime import datetime
 from __version__ import __version__
 
 class MainWindow(QMainWindow):
 
-    
+    ICON_PATH = Path(__file__).parent / "styles" / "icons"
 
     def __init__(self):
         super().__init__()
@@ -63,10 +65,14 @@ class MainWindow(QMainWindow):
 
         form.addRow(QLabel("Contraseña:"), pwd_container)
 
-        self.anio = QSpinBox()
-        self.anio.setRange(2026, 2050)
-        from datetime import datetime
-        self.anio.setValue(datetime.now().year)
+        self.anio = QComboBox()
+        years = [str(y) for y in range(2025, 2036)]
+        self.anio.addItems(years)
+        
+        current_year = str(datetime.now().year)
+        if current_year in years:
+            self.anio.setCurrentText(current_year)
+            
         form.addRow(QLabel("Año:"), self.anio)
 
         cred_box.setLayout(form)
@@ -97,27 +103,38 @@ class MainWindow(QMainWindow):
         botones = QHBoxLayout()
         botones.setSpacing(12)
 
+        # Crear botones primero
         self.btn_about = QPushButton("Acerca de")
-        self.btn_about.setObjectName("btn_about")
-        self.btn_about.setMinimumWidth(100)
-        self.btn_about.clicked.connect(self._show_about)
-        botones.addWidget(self.btn_about)
-
-        botones.addStretch()
         self.btn_generar = QPushButton("Generar")
-        self.btn_generar.setObjectName("btn_generar")
-        self.btn_generar.setMinimumWidth(120)
-        self.btn_generar.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
-        self.btn_generar.clicked.connect(self.on_generar)
-        botones.addWidget(self.btn_generar)
-
         self.btn_salir = QPushButton("Salir")
+
+        # ObjectName
+        self.btn_about.setObjectName("btn_about")
+        self.btn_generar.setObjectName("btn_generar")
         self.btn_salir.setObjectName("btn_salir")
-        self.btn_salir.setMinimumWidth(100)
+
+        # Conectar señales
+        self.btn_about.clicked.connect(self._show_about)
+        self.btn_generar.clicked.connect(self.on_generar)
         self.btn_salir.clicked.connect(self.close)
+
+        # Asignar iconos (usar self.ICON_PATH)
+        self.btn_about.setIcon(QIcon(str(self.ICON_PATH / "info.svg")))
+        self.btn_generar.setIcon(QIcon(str(self.ICON_PATH / "play.svg")))
+        self.btn_salir.setIcon(QIcon(str(self.ICON_PATH / "exit.svg")))
+
+        self.btn_about.setIconSize(QSize(16, 16))
+        self.btn_generar.setIconSize(QSize(16, 16))
+        self.btn_salir.setIconSize(QSize(16, 16))
+
+        # Añadir al layout
+        botones.addWidget(self.btn_about)
+        botones.addStretch()
+        botones.addWidget(self.btn_generar)
         botones.addWidget(self.btn_salir)
 
         layout.addLayout(botones)
+
 
         # Progreso y log
         self.progreso = QProgressBar()
@@ -143,7 +160,7 @@ class MainWindow(QMainWindow):
 
         usuario = self.usuario.text().strip()
         clave = self.clave.text().strip()
-        anio = int(self.anio.value())
+        anio = int(self.anio.currentText())
 
         if not usuario or not clave:
             QMessageBox.warning(self, "Faltan datos", "Usuario y contraseña son obligatorios.")

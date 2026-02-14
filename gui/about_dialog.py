@@ -4,8 +4,9 @@
 from PySide6.QtWidgets import (
     QDialog, QVBoxLayout, QHBoxLayout, QLabel, QPushButton
 )
+from PySide6.QtGui import QIcon
 from PySide6.QtGui import QDesktopServices
-from PySide6.QtCore import Qt, QUrl
+from PySide6.QtCore import Qt, QUrl, QSize
 from __version__ import __version__
 from pathlib import Path
 
@@ -13,14 +14,14 @@ from pathlib import Path
 class AboutDialog(QDialog):
     """Diálogo modal con información de la aplicación."""
     
-    def _load_styes(self):
+    ICON_PATH = Path(__file__).parent / "styles" / "icons"
+    
+    def _load_styles(self):
         """Carga la hoja de estilos desde un archivo externo."""
-        style_path = Path(__file__).parent / "styles" /"about.qss"
+        style_path = Path(__file__).parent / "styles" / "about.qss"
+        
         if style_path.exists():
-            with open(style_path, "r", encoding="utf-8") as f:
-                self.setStyleSheet(f.read())
-        else:
-            pass  # No crítico si no se encuentra el archivo de estilos
+            self.setStyleSheet(style_path.read_text(encoding="utf-8"))
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -38,7 +39,7 @@ class AboutDialog(QDialog):
             Qt.WindowType.WindowCloseButtonHint
         )
         
-        self._load_styes()
+        self._load_styles()
 
         self._build_ui()
 
@@ -143,11 +144,12 @@ class AboutDialog(QDialog):
 
         close_btn = QPushButton("Cerrar")
         close_btn.setObjectName("secondary")
+        close_btn.setIcon(QIcon(str(self.ICON_PATH / "close.svg")))
+        close_btn.setIconSize(QSize(16, 16))
         close_btn.clicked.connect(self.close)
         btn_layout.addWidget(close_btn)
 
         main_layout.addLayout(btn_layout)
-
         self.setLayout(main_layout)
 
     @staticmethod

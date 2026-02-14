@@ -20,7 +20,7 @@ QLabel {
     color: #2b2f33;
 }
 
-QLineEdit, QSpinBox, QTextEdit {
+QLineEdit, QTextEdit {
     background: #ffffff;
     border: 1px solid #dbe3ee;
     padding: 6px 8px;
@@ -28,11 +28,23 @@ QLineEdit, QSpinBox, QTextEdit {
     selection-background-color: #cfe6ff;
 }
 
+QSpinBox {
+    background: #ffffff;
+    border: 1px solid #dbe3ee;
+    border-radius: 8px;
+    padding-left: 8px;
+}
+
+QSpinBox:focus {
+    border: 1px solid #1e88e5;
+}
+
 QPushButton {
     background: #1e88e5;
     color: #ffffff;
     border: none;
     padding: 8px 10px;
+    padding-left: 10px;
     border-radius: 8px;
     
 }
@@ -72,7 +84,7 @@ QGroupBox {
     border: 1px solid #e3eaf4;
 }
 
-QLineEdit:focus, QSpinBox:focus, QTextEdit:focus {
+QLineEdit:focus, QTextEdit:focus {
     border: 1px solid #1e88e5;
 }
 
@@ -115,3 +127,28 @@ QTextEdit {
     border-radius: 10px;
     padding: 10px;
 }
+
+QComboBox {
+    background: #ffffff;
+    border: 1px solid #dbe3ee;
+    border-radius: 8px;
+    padding: 6px 8px;
+}
+
+QComboBox:focus {
+    border: 1px solid #1e88e5;
+}
+
+QComboBox::drop-down {
+    subcontrol-origin: padding;
+    subcontrol-position: top right;
+    width: 28px;
+    border-left: 1px solid #dbe3ee;
+}
+
+QComboBox::down-arrow {
+    image: url(gui/styles/icons/arrow-down-blue.svg);
+    width: 12px;
+    height: 12px;
+}
+
