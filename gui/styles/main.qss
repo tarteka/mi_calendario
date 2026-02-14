@@ -62,13 +62,21 @@ QPushButton#btn_salir {
 }
 
 QProgressBar {
-    background: #e9f0fb;
-    border-radius: 8px;
-    height: 14px;
+    background: #edf3fb;
+    border-radius: 10px;
+    height: 16px;
+    color: #222222; /* color del texto % */
+    font-size: 13pt; /* tamaño del texto % */
+    text-align: center; /* alinea el texto al centro */
 }
+
 QProgressBar::chunk {
-    background: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 #1e88e5, stop:1 #4fb3ff);
-    border-radius: 8px;
+    background: qlineargradient(
+        x1:0, y1:0, x2:1, y2:0,
+        stop:0 #1e88e5,
+        stop:1 #42a5f5
+    );
+    border-radius: 10px;
 }
 
 QTextEdit {
@@ -102,21 +110,6 @@ QPushButton#btn_salir {
 
 QPushButton#btn_salir:hover {
     background: #545b62;
-}
-
-QProgressBar {
-    background: #edf3fb;
-    border-radius: 10px;
-    height: 12px;
-}
-
-QProgressBar::chunk {
-    background: qlineargradient(
-        x1:0, y1:0, x2:1, y2:0,
-        stop:0 #1e88e5,
-        stop:1 #42a5f5
-    );
-    border-radius: 10px;
 }
 
 QTextEdit {

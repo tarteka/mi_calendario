@@ -35,6 +35,10 @@ class MainWindow(QMainWindow):
         self.worker = None
         self._build_ui()
         
+    def actualizar_texto(self, valor: int):
+        """Muestra el % solo si el valor es mayor que 0"""
+        self.progreso.setTextVisible(valor > 0)
+        
     def _build_ui(self):
         layout = QVBoxLayout()
         layout.setContentsMargins(30, 25, 30, 25)
@@ -140,6 +144,9 @@ class MainWindow(QMainWindow):
         self.progreso = QProgressBar()
         self.progreso.setRange(0, 100)
         self.progreso.setValue(0)
+        self.progreso.setTextVisible(False)  # Ocultar texto inicialmente
+        self.progreso.valueChanged.connect(self.actualizar_texto)  # Conectar para mostrar texto solo si valor > 0
+        
         layout.addWidget(self.progreso)
 
         self.log = QTextEdit()
