@@ -41,11 +41,19 @@ def ejecutar_scraper(config, year, canal, usuario=None, clave=None):
             
             # 1. LOGIN
             print("1. Logueando en el sistema...")
+
             page.goto(config["AMBU_URL"])
             page.fill("#Tusuario", usuario or "")
             page.fill("#Tclave", clave or "")
             page.click("#button1")
             page.wait_for_load_state("networkidle")
+
+            # Comprobación de login fallido
+            html_login = page.content()
+            soup_login = BeautifulSoup(html_login, "html.parser")
+            error_login = soup_login.find("p", class_="error")
+            if error_login and "no es correcta" in error_login.get_text():
+                raise Exception("Usuario o contraseña incorrectos. Por favor, revisa tus credenciales.")
 
             # 2. NAVEGACIÓN
             print("2. Accediendo a planificaciones...")

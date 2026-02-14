@@ -175,7 +175,7 @@ class MainWindow(QMainWindow):
 
         # Configuración base (puedes extenderla)
         config = {
-            "AMBU_URL": "https://ambulanciasgipuzkoa.ambu.app",
+            "AMBU_URL": "https://ambulanciasgipuzkoa.ambu.app/identificar.php",
             "AMBU_PLAN_URL": "https://ambulanciasgipuzkoa.ambu.app/admin/planificaciones/",
             "PROVINCIA_VAL": "617",
             "DIA_DESDE": "01", "MES_DESDE": "01",
