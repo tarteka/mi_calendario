@@ -1,4 +1,4 @@
-name: Crear Ejecutable Multiplataforma
+name: Crear Ejecutable Windows
 
 on:
   push:
@@ -10,56 +10,35 @@ permissions:
 
 jobs:
   build:
-    runs-on: ${{ matrix.os }}
-
-    strategy:
-      matrix:
-        os: [windows-latest, macos-latest, ubuntu-latest]
+    runs-on: windows-latest
 
     steps:
-      - name: Descargar código
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Configurar Python
+      - name: Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
           cache: 'pip'
 
-      - name: Instalar dependencias
+      - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt pyinstaller
 
-      - name: Crear ejecutable PySide6
-        shell: bash
+      - name: Build executable (PyInstaller)
+        shell: pwsh
+        env:
+          VERSION: ${{ github.ref_name }}
         run: |
-          VERSION=${GITHUB_REF#refs/tags/}
-          echo "Generando versión: $VERSION"
+          $version = $env:VERSION
+          Write-Host "Generando versión: $version"
+          $icon = 'assets/icon.ico'
+          $name = "Generador_Calendario_${version}"
+          python -m PyInstaller --onefile --windowed --clean --collect-all PySide6 --icon="$icon" --add-data "assets;assets" --add-data "gui;gui" --name $name main.py
 
-          if [ "$RUNNER_OS" == "Windows" ]; then
-            ICON="assets/icon.ico"
-            NAME="Generador_Calendario_${VERSION}_Windows"
-
-          elif [ "$RUNNER_OS" == "macOS" ]; then
-            ICON="assets/icon.icns"
-            NAME="Generador_Calendario_${VERSION}_macOS"
-
-          else
-            ICON="assets/icon.png"
-            NAME="Generador_Calendario_${VERSION}_Linux"
-          fi
-
-          python -m PyInstaller \
-            --onefile \
-            --windowed \
-            --clean \
-            --collect-all PySide6 \
-            --icon="$ICON" \
-            --name "$NAME" \
-            main.py
-
-      - name: Crear Release en GitHub
+      - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
         with:
           files: dist/*

@@ -2,14 +2,14 @@
 
 Este proyecto automatiza la extracción de turnos de trabajo desde la plataforma Ambu App y los convierte en formatos útiles: un **PDF listo para imprimir** y un archivo **ICS para integrar en Google Calendar o Apple Calendar (iPhone)**.
 
-[ ![Download v1.0.1](https://img.shields.io/badge/descargar_exe-v1.0.1-orange.svg) ](https://github.com/tarteka/mi_calendario/releases/download/v1.0.1/Generador_Calendario_v1.0.1.exe)
+[![Download v2.1.0](https://img.shields.io/badge/descargar_exe-v2.1.0-orange.svg)](https://github.com/tarteka/mi_calendario/releases/download/v2.1.0/Generador_Calendario_v2.1.0.exe)
 ![Python](https://img.shields.io/badge/python-3.10+-yellow.svg)
 
 ---
 
 ## Características
 
-* **Soporte Multianual:** El programa detecta el año actual y permite al usuario elegir cualquier año para generar el calendario.
+* **Opción de año:** El programa detecta el año actual y permite al usuario elegir cualquier año para generar el calendario.
 * **Rascado Automático:** Accede a la web oficial y extrae los turnos del año completo.
 * **Detección de Festivos:** Identifica automáticamente los días festivos (marcados en rojo en la web).
 * **Generador PDF:** Crea un calendario visual organizado por meses.
@@ -25,7 +25,6 @@ Si no eres programador, simplemente descarga el archivo ejecutable:
 1. Ve a la sección de **Releases** en este repositorio.
 2. Descarga `Generador_Calendario.exe`.
 3. Ejecútalo en tu ordenador.
-    * *Nota: La primera vez descargará el motor de navegación (Chromium), espera a que finalice.*
 4. Introduce tu **usuario**, **contraseña** y el **año** deseado (o pulsa Enter para el año actual).
 5. ¡Listo! Encontrarás `calendario.pdf` y `calendario.ics` en la misma carpeta.
 
@@ -64,7 +63,7 @@ python main.py
 Para empaquetar el proyecto en un solo archivo independiente para otros usuarios:
 
 ```bash
-python -m PyInstaller --onefile --console --clean --icon="calendario.ico" --name "Generador_Calendario" main.py
+build.bat
 ```
 
 El archivo final aparecerá en la carpeta `/dist`.

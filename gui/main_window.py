@@ -2,17 +2,32 @@
 # Ventana principal: formulario de credenciales, controls, barra de progreso y log.
 from PySide6.QtCore import Slot, Qt
 from PySide6.QtWidgets import (
-    QWidget, QVBoxLayout, QHBoxLayout, QFormLayout, QLabel, QLineEdit,
+    QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QFormLayout, QLabel, QLineEdit,
     QSpinBox, QPushButton, QTextEdit, QProgressBar, QMessageBox,
     QFileDialog, QGroupBox, QSizePolicy, QCheckBox
 )
 from pathlib import Path
 from .worker import Worker
+from PySide6.QtWidgets import QApplication
 
-class MainWindow(QWidget):
+class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("Generador de Calendario")
+        self.setWindowTitle("Mi Calendario de Guardias")
+        # Asegurar que la ventana se trata como una ventana normal (para barra de tareas)
+        try:
+            self.setWindowFlags(self.windowFlags() | Qt.Window)
+        except Exception:
+            pass
+
+        # Si la QApplication tiene un icono establecido, úsalo también en la ventana
+        try:
+            app_icon = QApplication.instance().windowIcon()
+            if not app_icon.isNull():
+                self.setWindowIcon(app_icon)
+        except Exception:
+            pass
+
         self.worker = None
         self.setMinimumSize(700, 420)
         self._build_ui()
@@ -103,7 +118,10 @@ class MainWindow(QWidget):
         self.log.setMinimumHeight(120)
         layout.addWidget(self.log)
 
-        self.setLayout(layout)
+        # Para QMainWindow usamos un widget central
+        central = QWidget()
+        central.setLayout(layout)
+        self.setCentralWidget(central)
 
     @Slot()
     def on_generar(self):
@@ -131,7 +149,7 @@ class MainWindow(QWidget):
         }
 
         # Crear y arrancar worker (hilo)
-        self.worker = Worker(config=config, year=anio, canal=None, usuario=usuario, clave=clave)
+        self.worker = Worker(config=config, year=anio, canal="chrome", usuario=usuario, clave=clave)
         self.worker.log.connect(self._append_log)
         self.worker.progress.connect(self.progreso.setValue)
         self.worker.finished_signal.connect(self._on_finished)

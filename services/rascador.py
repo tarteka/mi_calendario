@@ -9,13 +9,27 @@ def ejecutar_scraper(config, year, canal, usuario=None, clave=None):
 
         year_str = str(year)
 
-        # Si canal es "chrome" o "msedge", usará esos. 
+        # Si canal es "chrome" o "msedge", usará esos.
         # Si es None, usará el Chromium descargado.
         launch_args = {"headless": True}
         if canal:
             launch_args["channel"] = canal
 
-        browser = p.chromium.launch(**launch_args)
+        # Intentar lanzar navegador con fallback a Edge si Chrome no está disponible
+        browser = None
+        original_canal = canal
+        if canal == "chrome":
+            try:
+                browser = p.chromium.launch(**launch_args)
+            except Exception:
+                print(f"Chrome no encontrado, intentando con Edge...")
+                launch_args["channel"] = "msedge"
+                try:
+                    browser = p.chromium.launch(**launch_args)
+                except Exception:
+                    raise Exception("No hay navegadores compatibles instalados. Por favor, instala Chrome o Microsoft Edge.")
+        else:
+            browser = p.chromium.launch(**launch_args)
         context = browser.new_context()
 
         # Bloqueamos imágenes para velocidad (excepto las necesarias para el filtro)
