@@ -158,6 +158,5 @@ def ejecutar_scraper(config, year, canal, usuario=None, clave=None):
 
         except Exception as e:
             print(f"\nERROR: {e}")
-            page.screenshot(path="error_debug.png")
         finally:
             browser.close()
