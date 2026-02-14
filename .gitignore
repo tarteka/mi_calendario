@@ -12,7 +12,6 @@ dist/
 *.csv
 *.pdf
 *.ics
-*.png
 
 # Python (Archivos temporales)
 __pycache__/
