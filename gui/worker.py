@@ -24,12 +24,12 @@ class Worker(QThread):
 
     def run(self):
         try:
-            self.log.emit("Iniciando scraping...")
+            self.log.emit("Obteniendo todas las planificaciones de turnos...")
             self.progress.emit(5)
 
             # Ejecuta el rascador (usa sync_playwright internamente)
             rascador.ejecutar_scraper(self.config, self.year, self.canal, usuario=self.usuario, clave=self.clave)
-            self.log.emit("Scraping completado.")
+            self.log.emit("Planificaciones obtenidas.")
             self.progress.emit(60)
 
             # Generar PDF (usa calendarioPDF.generar_pdf)
@@ -39,9 +39,9 @@ class Worker(QThread):
             self.progress.emit(85)
 
             # Generar ICS (usa calendarioICS.crear_ics)
-            self.log.emit("Generando ICS...")
+            self.log.emit("Generando archivo ICS...")
             calendarioICS.crear_ics(self.config)
-            self.log.emit("ICS generado.")
+            self.log.emit("Archivo ICS generado.")
             self.progress.emit(95)
 
             self.finished_signal.emit()
