@@ -144,7 +144,7 @@ class AboutDialog(QDialog):
 
         close_btn = QPushButton("Cerrar")
         close_btn.setObjectName("secondary")
-        close_btn.setIcon(QIcon(str(self.ICON_PATH / "close.svg")))
+        close_btn.setIcon(QIcon(str(self.ICON_PATH / "exit.svg")))
         close_btn.setIconSize(QSize(16, 16))
         close_btn.clicked.connect(self.close)
         btn_layout.addWidget(close_btn)
