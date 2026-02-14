@@ -128,6 +128,23 @@ class AboutDialog(QDialog):
         disclaimer_text.setObjectName("text")
         disclaimer_text.setWordWrap(True)
         main_layout.addWidget(disclaimer_text)
+        
+        # ─────────────────────────────
+        # AUTOR
+        # ─────────────────────────────
+        author_title = QLabel("Autor")
+        author_title.setObjectName("section")
+        main_layout.addWidget(author_title)
+
+        author_label = QLabel(
+            '<a href="https://proyectozero.org">Sergio Moreno</a>'
+        )
+        author_label.setObjectName("text")
+        author_label.setAlignment(Qt.AlignCenter)
+        author_label.setOpenExternalLinks(True)  # Permite abrir el enlace automáticamente
+        author_label.setTextInteractionFlags(Qt.TextBrowserInteraction)
+        main_layout.addWidget(author_label)
+
 
         main_layout.addStretch()
 

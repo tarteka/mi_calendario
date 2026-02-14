@@ -49,3 +49,7 @@ QPushButton#secondary {
 QPushButton#secondary:hover {
     background-color: #666666;
 }
+
+QLabel[textFormat="RichText"] {
+    color: #0984e3;
+}
