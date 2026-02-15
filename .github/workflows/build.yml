@@ -35,9 +35,9 @@ jobs:
           $version = $env:VERSION
           Write-Host "Generando versión: $version"
           $icon = 'assets/icon.ico'
-          $name = "Generador_Calendario_${version}"
+          $name = "Generador_Calendario"
           python -m PyInstaller `
-            --onefile `
+            --onedir `
             --windowed `
             --clean `
             --collect-all PySide6 `
@@ -47,11 +47,21 @@ jobs:
             --add-data "config.json;." `
             --name $name `
             main.py
+      
+      - name: Install Inno Setup
+        run: choco install innosetup -y
+      
+      - name: Build Installer
+        shell: pwsh
+        env:
+          APP_VERSION: ${{ github.ref_name }}
+        run: |
+          & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" installer\setup.iss
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
         with:
-          files: dist/*
+          files: "dist/Generador_Calendario_*.exe"
           name: Release ${{ github.ref_name }}
           tag_name: ${{ github.ref_name }}
           draft: false
