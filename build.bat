@@ -12,10 +12,6 @@ if exist venv\Scripts\activate.bat (
 )
 
 echo.
-echo Actualizando versión en README...
-python update_version.py
-
-echo.
 echo Compilando ejecutable...
 python -m PyInstaller ^
   --onefile ^

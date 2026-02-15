@@ -2,8 +2,12 @@
 
 Este proyecto automatiza la extracción de turnos de trabajo desde la plataforma Ambu App y los convierte en formatos útiles: un **PDF listo para imprimir** y un archivo **ICS para integrar en Google Calendar o Apple Calendar (iPhone)**.
 
-[![Download v2.4.1](https://img.shields.io/badge/descargar_exe-v2.4.1-orange.svg)](https://github.com/tarteka/mi_calendario/releases/download/v2.4.1/Generador_Calendario_v2.4.1.exe)
-![Python](https://img.shields.io/badge/python-3.10+-yellow.svg)
+[![Descargar última versión](https://img.shields.io/github/v/release/tarteka/mi_calendario?style=for-the-badge&label=Descargar&color=blue)](https://github.com/tarteka/mi_calendario/releases/latest)
+
+![Windows](https://img.shields.io/badge/Windows-10%2B-blue?logo=windows&style=flat-square)
+![Python](https://img.shields.io/badge/Python-3.12-blue?logo=python&style=flat-square)
+![GUI](https://img.shields.io/badge/GUI-PySide6-green?style=flat-square)
+![Installer](https://img.shields.io/badge/Installer-Inno%20Setup-orange?style=flat-square)
 
 ---
 
@@ -105,12 +109,24 @@ GitHub detectará el tag, levantará un servidor con Windows, compilará el .exe
 
 ## Estructura del Código
 
-El sistema es modular y centralizado:
+El sistema es modular y cuenta con una interfaz gráfica moderna:
 
-* **`main.py`**: Puerta de entrada. Gestiona la entrada del usuario (incluyendo el año dinámico) y coordina el flujo.
-* **`rascador.py`**: Motor de Playwright y BeautifulSoup.
-* **`calendarioPDF.py`**: Generación de informes visuales.
-* **`calendarioICS.py`**: Formateo de eventos para calendarios digitales.
+* **`main.py`**: Punto de entrada principal. Lanza la aplicación y gestiona el flujo general.
+* **`gui/`**: Módulo de interfaz gráfica (PySide6).
+  * **`app.py`**: Inicializa la aplicación, carga estilos y el icono.
+  * **`main_window.py`**: Ventana principal, formulario de credenciales, barra de progreso y log.
+  * **`about_dialog.py`**: Diálogo "Acerca de".
+  * **`dialogs.py`**: Utilidades para mostrar mensajes y confirmaciones.
+  * **`worker.py`**: Hilo para ejecutar tareas largas sin bloquear la UI.
+  * **`styles/`**: Hojas de estilo (QSS) e iconos SVG.
+* **`services/`**: Lógica de negocio y utilidades.
+  * **`rascador.py`**: Extracción de turnos (web scraping).
+  * **`calendarioPDF.py`**: Generación de PDF.
+  * **`calendarioICS.py`**: Generación de archivo ICS.
+  * **`config_loader.py`**, **`exceptions.py`**: Utilidades y manejo de errores.
+* **`assets/`**: Recursos adicionales (iconos, imágenes, etc).
+* **`installer/`**: Scripts para el instalador (Inno Setup).
+* **`build/`**: Archivos generados tras la compilación.
 
 ---
 
