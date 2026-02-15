@@ -40,7 +40,6 @@ jobs:
             --onedir `
             --windowed `
             --clean `
-            --collect-all PySide6 `
             --icon="$icon" `
             --add-data "assets;assets" `
             --add-data "gui;gui" `
