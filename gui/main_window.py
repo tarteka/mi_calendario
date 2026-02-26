@@ -109,18 +109,35 @@ class MainWindow(QMainWindow):
         layout.addLayout(outfila)
 
 
-        # Selección de tipos de archivo a generar
-        tipo_archivo_layout = QHBoxLayout()
-        tipo_archivo_layout.setSpacing(12)
+        # Selección de tipos de archivo a generar (checkbox + descripción a la derecha)
+        tipo_archivo_box = QGroupBox("Archivos a crear:")
+        tipo_archivo_vlayout = QVBoxLayout()
+        tipo_archivo_vlayout.setSpacing(6)
+
+        # PDF (checkbox + descripción a la derecha)
+        pdf_layout = QHBoxLayout()
         self.chk_pdf = QCheckBox("Generar PDF")
         self.chk_pdf.setChecked(True)
+        pdf_layout.addWidget(self.chk_pdf)
+        pdf_desc = QLabel("<span style='color:#555;font-size:10pt;'>Calendario visual para imprimir o compartir.</span>")
+        pdf_desc.setWordWrap(False)
+        pdf_layout.addWidget(pdf_desc)
+        pdf_layout.addStretch()
+        tipo_archivo_vlayout.addLayout(pdf_layout)
+
+        # ICS (checkbox + descripción a la derecha)
+        ics_layout = QHBoxLayout()
         self.chk_ics = QCheckBox("Generar ICS")
         self.chk_ics.setChecked(True)
-        tipo_archivo_layout.addWidget(QLabel("Archivos a crear:"))
-        tipo_archivo_layout.addWidget(self.chk_pdf)
-        tipo_archivo_layout.addWidget(self.chk_ics)
-        tipo_archivo_layout.addStretch()
-        layout.addLayout(tipo_archivo_layout)
+        ics_layout.addWidget(self.chk_ics)
+        ics_desc = QLabel("<span style='color:#555;font-size:10pt;'>Archivo compatible con Google/Apple Calendar.</span>")
+        ics_desc.setWordWrap(False)
+        ics_layout.addWidget(ics_desc)
+        ics_layout.addStretch()
+        tipo_archivo_vlayout.addLayout(ics_layout)
+
+        tipo_archivo_box.setLayout(tipo_archivo_vlayout)
+        layout.addWidget(tipo_archivo_box)
 
         # Botones
         botones = QHBoxLayout()
