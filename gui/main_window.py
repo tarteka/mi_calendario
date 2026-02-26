@@ -35,6 +35,47 @@ class MainWindow(QMainWindow):
 
         self.worker = None
         self._build_ui()
+
+        # Chequeo de actualización en segundo plano
+        self._start_update_check_thread()
+
+    def _start_update_check_thread(self):
+        from PySide6.QtCore import QThread, Signal, QObject
+        from gui.update_service import check_for_updates
+
+        class UpdateWorker(QObject):
+            finished = Signal(object)
+            def run(self):
+                update = check_for_updates()
+                self.finished.emit(update)
+
+        self._update_thread = QThread()
+        self._update_worker = UpdateWorker()
+        self._update_worker.moveToThread(self._update_thread)
+        self._update_thread.started.connect(self._update_worker.run)
+        self._update_worker.finished.connect(self._on_update_check_finished)
+        self._update_worker.finished.connect(self._update_thread.quit)
+        self._update_worker.finished.connect(self._update_worker.deleteLater)
+        self._update_thread.finished.connect(self._update_thread.deleteLater)
+        self._update_thread.start()
+
+    def _on_update_check_finished(self, update):
+        if update:
+            msg = f"Hay una nueva versión disponible: {update.version}.\n¿Deseas descargar e instalar la actualización ahora?"
+            # Botones personalizados: Sí y Más tarde
+            si_btn = QMessageBox.Yes
+            mas_tarde_btn = QMessageBox.No
+            box = QMessageBox(self)
+            box.setWindowTitle("Actualización disponible")
+            box.setText(msg)
+            box.setIcon(QMessageBox.Question)
+            box.setStandardButtons(si_btn | mas_tarde_btn)
+            box.button(si_btn).setText("Sí")
+            box.button(mas_tarde_btn).setText("Más tarde")
+            reply = box.exec()
+            if reply == si_btn:
+                from gui.update_service import download_and_install
+                download_and_install(update, self)
         
     def actualizar_texto(self, valor: int):
         """Muestra el % solo si el valor es mayor que 0"""

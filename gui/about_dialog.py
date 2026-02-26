@@ -2,7 +2,7 @@
 # Diálogo "Acerca de" con diseño moderno y jerarquía visual clara
 
 from PySide6.QtWidgets import (
-    QDialog, QVBoxLayout, QHBoxLayout, QLabel, QPushButton
+    QDialog, QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QMessageBox
 )
 from PySide6.QtGui import QIcon
 from PySide6.QtGui import QDesktopServices
@@ -178,8 +178,24 @@ class AboutDialog(QDialog):
         self.setLayout(main_layout)
 
     def _check_update_gui(self):
-        from gui.update_service import ask_and_update
-        ask_and_update(self)
+        from gui.update_service import check_for_updates, download_and_install
+        update = check_for_updates()
+        if update:
+            msg = f"Hay una nueva versión disponible: {update.version}.\n¿Deseas descargar e instalar la actualización ahora?"
+            si_btn = QMessageBox.Yes
+            mas_tarde_btn = QMessageBox.No
+            box = QMessageBox(self)
+            box.setWindowTitle("Actualización disponible")
+            box.setText(msg)
+            box.setIcon(QMessageBox.Question)
+            box.setStandardButtons(si_btn | mas_tarde_btn)
+            box.button(si_btn).setText("Sí")
+            box.button(mas_tarde_btn).setText("No")
+            reply = box.exec()
+            if reply == si_btn:
+                download_and_install(update, self)
+        else:
+            QMessageBox.information(self, "Sin actualizaciones", "Ya tienes la última versión.")
 
     @staticmethod
     def _open_repository():
