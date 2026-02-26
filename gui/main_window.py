@@ -108,6 +108,20 @@ class MainWindow(QMainWindow):
 
         layout.addLayout(outfila)
 
+
+        # Selección de tipos de archivo a generar
+        tipo_archivo_layout = QHBoxLayout()
+        tipo_archivo_layout.setSpacing(12)
+        self.chk_pdf = QCheckBox("Generar PDF")
+        self.chk_pdf.setChecked(True)
+        self.chk_ics = QCheckBox("Generar ICS")
+        self.chk_ics.setChecked(True)
+        tipo_archivo_layout.addWidget(QLabel("Archivos a crear:"))
+        tipo_archivo_layout.addWidget(self.chk_pdf)
+        tipo_archivo_layout.addWidget(self.chk_ics)
+        tipo_archivo_layout.addStretch()
+        layout.addLayout(tipo_archivo_layout)
+
         # Botones
         botones = QHBoxLayout()
         botones.setSpacing(12)
@@ -181,12 +195,18 @@ class MainWindow(QMainWindow):
             self._append_log("Ya hay un proceso en ejecución.")
             return
 
+
         usuario = self.usuario.text().strip()
         clave = self.clave.text().strip()
         anio = int(self.anio.currentText())
 
         if not usuario or not clave:
             QMessageBox.warning(self, "Faltan datos", "Usuario y contraseña son obligatorios.")
+            return
+
+        # Validar que al menos uno de los tipos de archivo esté seleccionado
+        if not (self.chk_pdf.isChecked() or self.chk_ics.isChecked()):
+            QMessageBox.warning(self, "Faltan opciones", "Debes seleccionar al menos un tipo de archivo (PDF y/o ICS) a generar.")
             return
 
 
@@ -205,6 +225,8 @@ class MainWindow(QMainWindow):
         # Configuración para el worker (puede ser ampliada con más opciones si es necesario)
         config = load_config()
         config["OUTPUT"] = self.output_base
+        config["GENERAR_PDF"] = self.chk_pdf.isChecked()
+        config["GENERAR_ICS"] = self.chk_ics.isChecked()
 
         # Crear y arrancar worker (hilo)
         self.worker = Worker(config=config, year=anio, canal="chrome", usuario=usuario, clave=clave)
@@ -240,6 +262,16 @@ class MainWindow(QMainWindow):
         self._append_log("Proceso finalizado correctamente.")
         self.btn_generar.setEnabled(True)
         self.progreso.setValue(100)
+
+        # Intentar abrir el PDF generado automáticamente
+        pdf_path = Path(self.output_base).with_suffix('.pdf')
+        if pdf_path.exists():
+            try:
+                import subprocess
+                subprocess.Popen(["xdg-open", str(pdf_path)])
+                self._append_log(f"Abriendo PDF: {pdf_path}")
+            except Exception as e:
+                self._append_log(f"No se pudo abrir el PDF automáticamente: {e}")
 
     @Slot()
     def choose_output(self):

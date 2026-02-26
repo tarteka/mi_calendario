@@ -32,32 +32,33 @@ class Worker(QThread):
             self.log.emit("Planificaciones obtenidas.")
             self.progress.emit(60)
 
-            # Generar PDF (usa calendarioPDF.generar_pdf)
-            self.log.emit("Generando PDF...")
-            calendarioPDF.generar_pdf(self.config)
-            self.log.emit("PDF generado.")
-            self.progress.emit(85)
+            # Generar PDF si corresponde
+            if self.config.get("GENERAR_PDF", False):
+                self.log.emit("Generando PDF...")
+                calendarioPDF.generar_pdf(self.config)
+                self.log.emit("PDF generado.")
+                self.progress.emit(85)
 
-            # Generar ICS (usa calendarioICS.crear_ics)
-            self.log.emit("Generando archivo ICS...")
-            calendarioICS.crear_ics(self.config)
-            self.log.emit("Archivo ICS generado.")
-            self.progress.emit(95)
+            # Generar ICS si corresponde
+            if self.config.get("GENERAR_ICS", False):
+                self.log.emit("Generando archivo ICS...")
+                calendarioICS.crear_ics(self.config)
+                self.log.emit("Archivo ICS generado.")
+                self.progress.emit(95)
 
-            # Borrar el archivo CSV tras generar PDF e ICS
+            # Borrar el archivo CSV tras generar los archivos seleccionados
             import os
             out_base = self.config.get("OUTPUT", "calendario")
             csv_path = out_base + ".csv"
-            
             try:
                 if os.path.exists(csv_path):
                     os.remove(csv_path)
                     self.log.emit(f"Archivo temporal CSV eliminado: {csv_path}")
             except Exception as e:
                 self.log.emit(f"No se pudo eliminar el CSV: {e}")
-            
+
             self.progress.emit(100)
             self.finished_signal.emit()
-            
+
         except Exception as e:
             self.error.emit(str(e))
