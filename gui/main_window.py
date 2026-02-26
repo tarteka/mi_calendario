@@ -54,6 +54,9 @@ class MainWindow(QMainWindow):
         self.usuario.setPlaceholderText("Usuario de Lotura (ambulanciasgipuzkoa.ambu.app)")
         form.addRow(QLabel("Usuario:"), self.usuario)
 
+        # Conectar cambios en usuario y año para actualizar la ruta de salida
+        self.usuario.textChanged.connect(self._update_output_path)
+
         self.clave = QLineEdit()
         self.clave.setPlaceholderText("Contraseña de Lotura")
         self.clave.setEchoMode(QLineEdit.Password)
@@ -77,7 +80,8 @@ class MainWindow(QMainWindow):
         current_year = str(datetime.now().year)
         if current_year in years:
             self.anio.setCurrentText(current_year)
-            
+
+        self.anio.currentTextChanged.connect(self._update_output_path)
         form.addRow(QLabel("Año:"), self.anio)
 
         cred_box.setLayout(form)
@@ -140,14 +144,12 @@ class MainWindow(QMainWindow):
 
         layout.addLayout(botones)
 
-
         # Progreso y log
         self.progreso = QProgressBar()
         self.progreso.setRange(0, 100)
         self.progreso.setValue(0)
         self.progreso.setTextVisible(False)  # Ocultar texto inicialmente
         self.progreso.valueChanged.connect(self.actualizar_texto)  # Conectar para mostrar texto solo si valor > 0
-        
         layout.addWidget(self.progreso)
 
         self.log = QTextEdit()
@@ -159,6 +161,19 @@ class MainWindow(QMainWindow):
         central = QWidget()
         central.setLayout(layout)
         self.setCentralWidget(central)
+
+    def _update_output_path(self):
+        """Actualiza el campo de ruta de salida según usuario y año."""
+        usuario = self.usuario.text().strip().replace(" ", "_")
+        anio = self.anio.currentText()
+        if usuario and anio:
+            base_path = Path(self.output_base).parent if hasattr(self, 'output_base') else Path.home()
+            nombre_archivo = f"calendario-{usuario}-{anio}"
+            nueva_ruta = str(base_path / nombre_archivo)
+            self.output_path.setText(nueva_ruta)
+        else:
+            # Si falta usuario o año, mostrar solo la carpeta base
+            self.output_path.setText(self.output_base)
 
     @Slot()
     def on_generar(self):
@@ -173,6 +188,15 @@ class MainWindow(QMainWindow):
         if not usuario or not clave:
             QMessageBox.warning(self, "Faltan datos", "Usuario y contraseña son obligatorios.")
             return
+
+
+        # Modificar el nombre base del archivo de salida: calendario-usuario-año
+        nombre_usuario = usuario.replace(" ", "_")
+        nombre_archivo = f"calendario-{nombre_usuario}-{anio}"
+        # Mantener la ruta base elegida por el usuario, pero cambiar el nombre
+        base_path = Path(self.output_base).parent
+        self.output_base = str(base_path / nombre_archivo)
+        self.output_path.setText(self.output_base)
 
         # Limpiar los campos de usuario y contraseña
         self.usuario.clear()
