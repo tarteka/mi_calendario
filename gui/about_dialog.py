@@ -154,6 +154,14 @@ class AboutDialog(QDialog):
         btn_layout = QHBoxLayout()
         btn_layout.addStretch()
 
+        # Botón Buscar actualización
+        update_btn = QPushButton("Buscar actualización")
+        update_btn.setObjectName("btn_check_update")
+        update_btn.setIcon(QIcon(str(self.ICON_PATH / "update.svg")) if (self.ICON_PATH / "update.svg").exists() else QIcon())
+        update_btn.setIconSize(QSize(16, 16))
+        update_btn.clicked.connect(self._check_update_gui)
+        btn_layout.addWidget(update_btn)
+
         repo_btn = QPushButton("Ver en GitHub")
         repo_btn.setObjectName("primary")
         repo_btn.clicked.connect(self._open_repository)
@@ -168,6 +176,10 @@ class AboutDialog(QDialog):
 
         main_layout.addLayout(btn_layout)
         self.setLayout(main_layout)
+
+    def _check_update_gui(self):
+        from gui.update_service import ask_and_update
+        ask_and_update(self)
 
     @staticmethod
     def _open_repository():

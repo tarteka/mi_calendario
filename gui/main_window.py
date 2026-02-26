@@ -41,6 +41,10 @@ class MainWindow(QMainWindow):
         self.progreso.setTextVisible(valor > 0)
         
     def _build_ui(self):
+        # ...existing code...
+        # (todo el resto del layout...)
+
+        # --- Aquí va la construcción del layout principal y widgets ---
         layout = QVBoxLayout()
         layout.setContentsMargins(30, 25, 30, 25)
         layout.setSpacing(18)
@@ -53,15 +57,11 @@ class MainWindow(QMainWindow):
         self.usuario = QLineEdit()
         self.usuario.setPlaceholderText("Usuario de Lotura (ambulanciasgipuzkoa.ambu.app)")
         form.addRow(QLabel("Usuario:"), self.usuario)
-
-        # Conectar cambios en usuario y año para actualizar la ruta de salida
         self.usuario.textChanged.connect(self._update_output_path)
 
         self.clave = QLineEdit()
         self.clave.setPlaceholderText("Contraseña de Lotura")
         self.clave.setEchoMode(QLineEdit.Password)
-
-        # Container for password + show checkbox
         pwd_container = QWidget()
         pwd_layout = QHBoxLayout(pwd_container)
         pwd_layout.setContentsMargins(0, 0, 0, 0)
@@ -70,17 +70,14 @@ class MainWindow(QMainWindow):
         self.chk_show_pwd = QCheckBox("Mostrar contraseña")
         self.chk_show_pwd.toggled.connect(self._toggle_password_visibility)
         pwd_layout.addWidget(self.chk_show_pwd)
-
         form.addRow(QLabel("Contraseña:"), pwd_container)
 
         self.anio = QComboBox()
         years = [str(y) for y in range(2025, 2036)]
         self.anio.addItems(years)
-        
         current_year = str(datetime.now().year)
         if current_year in years:
             self.anio.setCurrentText(current_year)
-
         self.anio.currentTextChanged.connect(self._update_output_path)
         form.addRow(QLabel("Año:"), self.anio)
 
@@ -93,7 +90,6 @@ class MainWindow(QMainWindow):
         outfila.addWidget(QLabel("Guardar en:"))
         self.output_path = QLineEdit()
         self.output_path.setReadOnly(True)
-        # valor por defecto: 'calendario' dentro de la carpeta Descargas del usuario (si existe)
         downloads = Path.home() / "Downloads"
         if downloads.exists() and downloads.is_dir():
             self.output_base = str(downloads / "calendario")
@@ -101,20 +97,15 @@ class MainWindow(QMainWindow):
             self.output_base = str(Path.home() / "calendario")
         self.output_path.setText(self.output_base)
         outfila.addWidget(self.output_path)
-
         self.btn_change_output = QPushButton("Cambiar...")
         self.btn_change_output.clicked.connect(self.choose_output)
         outfila.addWidget(self.btn_change_output)
-
         layout.addLayout(outfila)
-
 
         # Selección de tipos de archivo a generar (checkbox + descripción a la derecha)
         tipo_archivo_box = QGroupBox("Archivos a crear:")
         tipo_archivo_vlayout = QVBoxLayout()
         tipo_archivo_vlayout.setSpacing(6)
-
-        # PDF (checkbox + descripción a la derecha)
         pdf_layout = QHBoxLayout()
         self.chk_pdf = QCheckBox("Generar PDF")
         self.chk_pdf.setChecked(True)
@@ -124,8 +115,6 @@ class MainWindow(QMainWindow):
         pdf_layout.addWidget(pdf_desc)
         pdf_layout.addStretch()
         tipo_archivo_vlayout.addLayout(pdf_layout)
-
-        # ICS (checkbox + descripción a la derecha)
         ics_layout = QHBoxLayout()
         self.chk_ics = QCheckBox("Generar ICS")
         self.chk_ics.setChecked(True)
@@ -135,63 +124,55 @@ class MainWindow(QMainWindow):
         ics_layout.addWidget(ics_desc)
         ics_layout.addStretch()
         tipo_archivo_vlayout.addLayout(ics_layout)
-
         tipo_archivo_box.setLayout(tipo_archivo_vlayout)
         layout.addWidget(tipo_archivo_box)
 
         # Botones
         botones = QHBoxLayout()
         botones.setSpacing(12)
-
-        # Crear botones primero
         self.btn_about = QPushButton("Acerca de")
         self.btn_generar = QPushButton("Generar")
         self.btn_salir = QPushButton("Salir")
-
-        # ObjectName
         self.btn_about.setObjectName("btn_about")
         self.btn_generar.setObjectName("btn_generar")
         self.btn_salir.setObjectName("btn_salir")
-
-        # Conectar señales
         self.btn_about.clicked.connect(self._show_about)
         self.btn_generar.clicked.connect(self.on_generar)
         self.btn_salir.clicked.connect(self.close)
-
-        # Asignar iconos (usar self.ICON_PATH)
         self.btn_about.setIcon(QIcon(str(self.ICON_PATH / "info.svg")))
         self.btn_generar.setIcon(QIcon(str(self.ICON_PATH / "play.svg")))
         self.btn_salir.setIcon(QIcon(str(self.ICON_PATH / "exit.svg")))
-
         self.btn_about.setIconSize(QSize(16, 16))
         self.btn_generar.setIconSize(QSize(16, 16))
         self.btn_salir.setIconSize(QSize(16, 16))
-
-        # Añadir al layout
         botones.addWidget(self.btn_about)
         botones.addStretch()
         botones.addWidget(self.btn_generar)
         botones.addWidget(self.btn_salir)
-
         layout.addLayout(botones)
 
         # Progreso y log
         self.progreso = QProgressBar()
         self.progreso.setRange(0, 100)
         self.progreso.setValue(0)
-        self.progreso.setTextVisible(False)  # Ocultar texto inicialmente
-        self.progreso.valueChanged.connect(self.actualizar_texto)  # Conectar para mostrar texto solo si valor > 0
+        self.progreso.setTextVisible(False)
+        self.progreso.valueChanged.connect(self.actualizar_texto)
         layout.addWidget(self.progreso)
-
         self.log = QTextEdit()
         self.log.setReadOnly(True)
         self.log.setMinimumHeight(120)
         layout.addWidget(self.log)
 
+        # El botón de actualización se moverá al diálogo Acerca de
+
         # Para QMainWindow usamos un widget central
         central = QWidget()
         central.setLayout(layout)
         self.setCentralWidget(central)
+
+    def _check_update_gui(self):
+        from gui.update_service import ask_and_update
+        ask_and_update(self)
 
     def _update_output_path(self):
         """Actualiza el campo de ruta de salida según usuario y año."""
