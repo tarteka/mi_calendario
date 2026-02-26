@@ -9,7 +9,10 @@ from PySide6.QtWidgets import QMessageBox, QApplication
 
 from __version__ import __version__
 
-GITHUB_API_URL = "https://api.github.com/repos/tarteka/mi_calendario/releases/latest"
+GITHUB_API_URL = os.environ.get(
+    "GITHUB_API_URL",
+    "https://api.github.com/repos/tarteka/mi_calendario/releases/latest"
+)
 
 @dataclass
 class UpdateInfo:

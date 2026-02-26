@@ -190,9 +190,10 @@ class AboutDialog(QDialog):
             box.setIcon(QMessageBox.Question)
             box.setStandardButtons(si_btn | mas_tarde_btn)
             box.button(si_btn).setText("Sí")
-            box.button(mas_tarde_btn).setText("No")
+            box.button(mas_tarde_btn).setText("Más tarde")
             reply = box.exec()
             if reply == si_btn:
+                from gui.update_service import download_and_install
                 download_and_install(update, self)
         else:
             QMessageBox.information(self, "Sin actualizaciones", "Ya tienes la última versión.")
@@ -200,6 +201,6 @@ class AboutDialog(QDialog):
     @staticmethod
     def _open_repository():
         """Abre el repositorio en el navegador predeterminado."""
-        QDesktopServices.openUrl(
-            QUrl("https://github.com/tarteka/mi_calendario")
-        )
+        import os
+        repo_url = os.environ.get("GITHUB_REPO_URL", "https://github.com/tarteka/mi_calendario")
+        QDesktopServices.openUrl(QUrl(repo_url))
