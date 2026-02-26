@@ -174,6 +174,10 @@ class MainWindow(QMainWindow):
             QMessageBox.warning(self, "Faltan datos", "Usuario y contraseña son obligatorios.")
             return
 
+        # Limpiar los campos de usuario y contraseña
+        self.usuario.clear()
+        self.clave.clear()
+
         # Configuración para el worker (puede ser ampliada con más opciones si es necesario)
         config = load_config()
         config["OUTPUT"] = self.output_base
