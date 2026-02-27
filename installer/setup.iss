@@ -5,7 +5,7 @@
 [Setup]
 AppName={#MyAppName}
 AppVersion={#MyAppVersion}
-DefaultDirName={pf}\GeneradorCalendario
+DefaultDirName={commonpf}\GeneradorCalendario
 DefaultGroupName={#MyAppName}
 OutputDir=..\dist
 OutputBaseFilename=Generador_Calendario_{#MyAppVersion}
