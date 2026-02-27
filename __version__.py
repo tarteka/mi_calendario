@@ -1,3 +1,8 @@
-"""Versionamiento de la aplicación."""
+import os
+from dotenv import load_dotenv
 
-__version__ = "2.4.0"
+"""Versionamiento de la aplicación."""
+load_dotenv()
+__version__ = os.environ.get("VERSION", "0.0.0")
+
+
