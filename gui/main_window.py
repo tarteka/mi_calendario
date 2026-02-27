@@ -1,4 +1,3 @@
-# gui/main_window.py
 # Ventana principal: formulario de credenciales, controls, barra de progreso y log.
 from PySide6.QtCore import Slot, Qt, QSize
 from PySide6.QtWidgets import (
@@ -21,7 +20,7 @@ class MainWindow(QMainWindow):
 
     def __init__(self):
         super().__init__()
-        self.setWindowTitle(f"Mi Calendario de Guardias - v{__version__}")
+        self.setWindowTitle("Mi Calendario de Guardias")
 
         # Si la QApplication tiene un icono establecido, úsalo también en la ventana
         try:
@@ -204,8 +203,6 @@ class MainWindow(QMainWindow):
         self.log.setMinimumHeight(120)
         layout.addWidget(self.log)
 
-        # El botón de actualización se moverá al diálogo Acerca de
-
         # Para QMainWindow usamos un widget central
         central = QWidget()
         central.setLayout(layout)
@@ -247,6 +244,9 @@ class MainWindow(QMainWindow):
         if not (self.chk_pdf.isChecked() or self.chk_ics.isChecked()):
             QMessageBox.warning(self, "Faltan opciones", "Debes seleccionar al menos un tipo de archivo (PDF y/o ICS) a generar.")
             return
+
+        # Limpiar log
+        self.log.clear()
 
 
         # Modificar el nombre base del archivo de salida: calendario-usuario-año
