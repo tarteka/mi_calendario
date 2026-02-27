@@ -85,7 +85,7 @@ def run_app():
 
     if icon_path:
         window.setWindowIcon(QIcon(icon_path))
-    window.show()
+    window.showMaximized()
 
     # Forzar icono de ventana después de mostrarla (algunas versiones de Windows/Qt lo requieren)
     try:
