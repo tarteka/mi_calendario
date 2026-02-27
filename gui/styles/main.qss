@@ -10,10 +10,6 @@ QMainWindow {
     background: #f6f8fb;
 }
 
-QGroupBox {
-    border: none;
-    margin-top: 0px;
-}
 
 QLabel {
     font-weight: 600;
@@ -90,6 +86,14 @@ QGroupBox {
     border-radius: 12px;
     padding: 16px;
     border: 1px solid #e3eaf4;
+    margin-top: 10px;
+}
+
+QGroupBox::title {
+    subcontrol-origin: margin;
+    subcontrol-position: top left;
+    padding: 0 6px;
+    left: 10px;
 }
 
 QLineEdit:focus, QTextEdit:focus {
