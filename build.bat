@@ -50,7 +50,6 @@ python -m PyInstaller ^
   --exclude-module tkinter ^
   --exclude-module tzdata ^
   --exclude-module lib2to3 ^
-  --exclude-module unittest ^
   --name "Generador_Calendario" ^
   main.py
 
